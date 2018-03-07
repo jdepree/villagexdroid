@@ -33,6 +33,8 @@ public class Project {
     @SerializedName("picture_filename")
     private String mPicture;
 
+    private Village mVillage;
+
     public int getId() {
         return mId;
     }
@@ -71,6 +73,14 @@ public class Project {
 
     public void setVillageId(int villageId) {
         mVillageId = villageId;
+    }
+
+    public Village getVillage() {
+        return mVillage;
+    }
+
+    public void setVillage(Village village) {
+        mVillage = village;
     }
 
     public int getBudget() {

@@ -4,6 +4,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 import com.google.maps.android.clustering.ClusterItem;
 
+import java.util.List;
+
 
 public class Village implements ClusterItem {
     @SerializedName("village_id")
@@ -17,6 +19,8 @@ public class Village implements ClusterItem {
 
     @SerializedName("village_lng")
     private float mLng;
+
+    private List<Project> mProjects;
 
     public int getId() {
         return mId;
@@ -60,5 +64,13 @@ public class Village implements ClusterItem {
 
     public String getSnippet() {
         return mName;
+    }
+
+    public void setProjects(List<Project> projects) {
+        mProjects = projects;
+    }
+
+    public List<Project> getProjects() {
+        return mProjects;
     }
 }

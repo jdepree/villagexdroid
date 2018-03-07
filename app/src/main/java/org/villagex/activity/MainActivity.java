@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,7 +56,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private DataService mService;
     private SQLiteDatabase mDatabase;
     private Config mConfig;
-    private Hashtable<Integer, List<Project>> mVillageProjectMapping = new Hashtable<>();
+    private Hashtable<Integer, Village> mVillageMapping = new Hashtable<>();
     private List<Marker> mCurrentVillageMarkers = null;
 
     private RecyclerView mRecyclerView;
@@ -94,25 +95,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mClusterManager.setRenderer(new VillageRenderer(this, mMap, mClusterManager));
 
         mClusterManager.setOnClusterItemClickListener(clusterItem -> {
-            int id = Integer.parseInt(clusterItem.getTitle());
-            List<Project> projects = mVillageProjectMapping.get(id);
-            mCurrentVillageMarkers = new ArrayList<>();
-
-            mLevelBounds.push(mMap.getProjection().getVisibleRegion().latLngBounds);
-            LatLngBounds.Builder builder = LatLngBounds.builder();
-            builder.include(clusterItem.getPosition());
-            for (Project project : projects) {
-                Marker nextMarker = mMap.addMarker(new MarkerOptions()
-                        .position(project.getPosition())
-                        .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(
-                                "type_" + project.getType(), "drawable", getPackageName()))
-                        )
-                );
-                builder.include(nextMarker.getPosition());
-                mCurrentVillageMarkers.add(nextMarker);
-            }
-            final LatLngBounds bounds = builder.build();
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS));
+            zoomToVillage((Village)clusterItem);
 
             return true;
         });
@@ -138,10 +121,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         if (mCurrentVillageMarkers != null) {
-            for (Marker marker : mCurrentVillageMarkers) {
-                marker.remove();
-            }
-            mCurrentVillageMarkers = null;
+            clearVillageMarkers();
         }
         if (!mLevelBounds.isEmpty()) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mLevelBounds.pop(), 0));
@@ -176,6 +156,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         saveVersionsToDatabase(mConfig);
                     }
                     mClusterManager.addItems(villages);
+                    for (Village village : villages) {
+                        mVillageMapping.put(village.getId(), village);
+                    }
                     if (mConfig.getProjectsVersion() > dbConfig.getVillagesVersion()) {
                         return mService.getProjects();
                     } else {
@@ -194,7 +177,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }, error -> {
                     if (dbConfig.getVillagesVersion() == 0) {
-
+                        // TODO Error message.
                     }
                     mClusterManager.addItems(getVillagesFromDatabase());
                     populateMarkers(getProjectsFromDatabase());
@@ -202,20 +185,54 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void populateMarkers(List<Project> projects){
-        mAdapter = new ProjectAdapter(projects);
+        mAdapter = new ProjectAdapter(projects, project -> zoomToVillage(project.getVillage()));
         mRecyclerView.setAdapter(mAdapter);
 
         LatLng malawi = new LatLng(-13.5, 34.5);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(malawi, 6.5f), 2000, null);
 
         for (Project project : projects) {
-            List<Project> projectList = mVillageProjectMapping.get(project.getVillageId());
+            Village village = mVillageMapping.get(project.getVillageId());
+            project.setVillage(village);
+            List<Project> projectList = village.getProjects();
             if (projectList == null) {
                 projectList = new ArrayList<>();
-                mVillageProjectMapping.put(project.getVillageId(), projectList);
+                village.setProjects(projectList);
             }
             projectList.add(project);
         }
+    }
+
+    private void clearVillageMarkers() {
+        for (Marker marker : mCurrentVillageMarkers) {
+            marker.remove();
+        }
+        mCurrentVillageMarkers = null;
+    }
+
+    private void zoomToVillage(Village village) {
+        List<Project> projects = village.getProjects();
+        if (mCurrentVillageMarkers != null) {
+            clearVillageMarkers();
+        } else {
+            mLevelBounds.push(mMap.getProjection().getVisibleRegion().latLngBounds);
+        }
+        mCurrentVillageMarkers = new ArrayList<>();
+
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        builder.include(village.getPosition());
+        for (Project project : projects) {
+            Marker nextMarker = mMap.addMarker(new MarkerOptions()
+                    .position(project.getPosition())
+                    .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(
+                            "type_" + project.getType(), "drawable", getPackageName()))
+                    )
+            );
+            builder.include(nextMarker.getPosition());
+            mCurrentVillageMarkers.add(nextMarker);
+        }
+        final LatLngBounds bounds = builder.build();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS));
     }
 
     private void saveProjectsToDatabase(List<Project> projects) {
@@ -272,6 +289,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onBeforeClusterItemRendered(Village village, MarkerOptions markerOptions) {
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_village));
+            markerOptions.title(village.getName()).snippet(village.getName()).visible(true);
         }
     }
 

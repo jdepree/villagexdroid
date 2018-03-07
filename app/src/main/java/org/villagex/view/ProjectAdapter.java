@@ -3,6 +3,7 @@ package org.villagex.view;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHolder> {
     private List<Project> mProjects;
+    private ItemClickListener mListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImageView;
@@ -34,8 +36,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         }
     }
 
-    public ProjectAdapter(List<Project> projects) {
+    public ProjectAdapter(List<Project> projects, ItemClickListener listener) {
         mProjects = projects;
+        mListener = listener;
     }
 
     public ProjectAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -59,9 +62,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         holder.mProgressBar.setProgress(Math.round(100 * project.getFunded() / project.getBudget()));
         holder.mTextView.setText(project.getName());
 
+        holder.itemView.setOnClickListener(v -> mListener.itemClicked(project));
     }
 
     public int getItemCount() {
         return mProjects.size();
+    }
+
+    public interface ItemClickListener {
+        void itemClicked(Project project);
     }
 }

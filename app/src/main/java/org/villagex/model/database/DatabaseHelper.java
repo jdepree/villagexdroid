@@ -1,12 +1,12 @@
-package org.villagex.villagex.model.database;
+package org.villagex.model.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import org.villagex.villagex.model.database.DatabaseSchema.VersionTable;
-import org.villagex.villagex.model.database.DatabaseSchema.ProjectTable;
-import org.villagex.villagex.model.database.DatabaseSchema.VillageTable;
+import org.villagex.model.database.DatabaseSchema.VersionTable;
+import org.villagex.model.database.DatabaseSchema.ProjectTable;
+import org.villagex.model.database.DatabaseSchema.VillageTable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;

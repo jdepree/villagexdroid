@@ -1,4 +1,4 @@
-package org.villagex.villagex.activity;
+package org.villagex.activity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,15 +21,15 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import org.villagex.villagex.R;
-import org.villagex.villagex.model.Config;
-import org.villagex.villagex.model.Project;
-import org.villagex.villagex.model.Village;
-import org.villagex.villagex.model.database.DatabaseHelper;
-import org.villagex.villagex.model.database.DatabaseSchema;
-import org.villagex.villagex.model.database.ProjectCursorWrapper;
-import org.villagex.villagex.model.database.VillageCursorWrapper;
-import org.villagex.villagex.network.DataService;
+import org.villagex.R;
+import org.villagex.model.Config;
+import org.villagex.model.Project;
+import org.villagex.model.Village;
+import org.villagex.model.database.DatabaseHelper;
+import org.villagex.model.database.DatabaseSchema;
+import org.villagex.model.database.ProjectCursorWrapper;
+import org.villagex.model.database.VillageCursorWrapper;
+import org.villagex.network.DataService;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

@@ -1,8 +1,8 @@
-package org.villagex.villagex.network;
+package org.villagex.network;
 
-import org.villagex.villagex.model.Config;
-import org.villagex.villagex.model.Project;
-import org.villagex.villagex.model.Village;
+import org.villagex.model.Config;
+import org.villagex.model.Project;
+import org.villagex.model.Village;
 
 import java.util.List;
 

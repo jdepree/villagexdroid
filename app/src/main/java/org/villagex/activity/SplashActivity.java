@@ -1,4 +1,4 @@
-package org.villagex.villagex.activity;
+package org.villagex.activity;
 
 import android.app.Activity;
 import android.content.Intent;

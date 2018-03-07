@@ -1,10 +1,10 @@
-package org.villagex.villagex.model.database;
+package org.villagex.model.database;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import org.villagex.villagex.model.Project;
-import org.villagex.villagex.model.database.DatabaseSchema.ProjectTable.Cols;
+import org.villagex.model.Project;
+import org.villagex.model.database.DatabaseSchema.ProjectTable.Cols;
 
 import java.util.ArrayList;
 import java.util.List;

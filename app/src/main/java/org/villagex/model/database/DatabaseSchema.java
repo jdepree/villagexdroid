@@ -1,10 +1,10 @@
-package org.villagex.villagex.model.database;
+package org.villagex.model.database;
 
 import android.content.ContentValues;
 
-import org.villagex.villagex.model.Config;
-import org.villagex.villagex.model.Project;
-import org.villagex.villagex.model.Village;
+import org.villagex.model.Config;
+import org.villagex.model.Project;
+import org.villagex.model.Village;
 
 public class DatabaseSchema {
     public static final class VersionTable {

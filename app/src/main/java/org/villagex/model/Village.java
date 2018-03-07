@@ -1,4 +1,4 @@
-package org.villagex.villagex.model;
+package org.villagex.model;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;

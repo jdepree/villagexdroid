@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +33,7 @@ import org.villagex.model.database.DatabaseSchema;
 import org.villagex.model.database.ProjectCursorWrapper;
 import org.villagex.model.database.VillageCursorWrapper;
 import org.villagex.network.DataService;
+import org.villagex.view.ProjectAdapter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -54,6 +58,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Hashtable<Integer, List<Project>> mVillageProjectMapping = new Hashtable<>();
     private List<Marker> mCurrentVillageMarkers = null;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +68,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        prepareRecyclerView();
+    }
+
+    public void prepareRecyclerView() {
+        mRecyclerView = findViewById(R.id.project_recycler);
+        mRecyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(manager);
     }
 
     @Override
@@ -184,6 +202,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void populateMarkers(List<Project> projects){
+        mAdapter = new ProjectAdapter(projects);
+        mRecyclerView.setAdapter(mAdapter);
+
         LatLng malawi = new LatLng(-13.5, 34.5);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(malawi, 6.5f), 2000, null);
 
@@ -253,4 +274,5 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_village));
         }
     }
+
 }

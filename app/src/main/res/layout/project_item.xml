@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="150dp"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="1dp"
+    android:layout_marginRight="1dp"
+    android:background="@drawable/rounded"
+    android:elevation="2dp" >
+    <ImageView android:id="@+id/project_card_image"
+        android:layout_width="match_parent"
+        android:layout_height="125dp" />
+    <ProgressBar android:id="@+id/project_card_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_height="15dp"
+        android:progressDrawable="@drawable/green_progress" />
+    <TextView android:id="@+id/project_card_text"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:textSize="10dp"
+        android:textStyle="bold" />
+</LinearLayout>

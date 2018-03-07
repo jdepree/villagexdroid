@@ -24,6 +24,7 @@ public class ProjectCursorWrapper extends CursorWrapper {
         project.setType(getString(getColumnIndex(Cols.TYPE)));
         project.setBudget(getInt(getColumnIndex(Cols.BUDGET)));
         project.setFunded(getInt(getColumnIndex(Cols.FUNDED)));
+        project.setPicture(getString(getColumnIndex(Cols.PICTURE)));
 
         return project;
     }

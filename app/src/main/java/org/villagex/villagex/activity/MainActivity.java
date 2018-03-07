@@ -1,6 +1,8 @@
 package org.villagex.villagex.activity;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,23 +11,25 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.google.maps.android.ui.IconGenerator;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.villagex.villagex.R;
-import org.villagex.villagex.data.Project;
-import org.villagex.villagex.data.Village;
-import org.villagex.villagex.network.MarkerService;
+import org.villagex.villagex.model.Config;
+import org.villagex.villagex.model.Project;
+import org.villagex.villagex.model.Village;
+import org.villagex.villagex.model.database.DatabaseHelper;
+import org.villagex.villagex.model.database.DatabaseSchema;
+import org.villagex.villagex.model.database.ProjectCursorWrapper;
+import org.villagex.villagex.model.database.VillageCursorWrapper;
+import org.villagex.villagex.network.DataService;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -33,20 +37,20 @@ import java.util.List;
 import java.util.Stack;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
-    private static final int MAP_PADDING_PIXELS = 100;
+    private static final int MAP_PADDING_PIXELS = 200;
 
     private GoogleMap mMap;
     private ClusterManager mClusterManager;
     private Stack<LatLngBounds> mLevelBounds = new Stack<>();
-    private MarkerService mService;
+    private DataService mService;
+    private SQLiteDatabase mDatabase;
+    private Config mConfig;
     private Hashtable<Integer, List<Project>> mVillageProjectMapping = new Hashtable<>();
     private List<Marker> mCurrentVillageMarkers = null;
 
@@ -78,7 +82,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             mLevelBounds.push(mMap.getProjection().getVisibleRegion().latLngBounds);
             LatLngBounds.Builder builder = LatLngBounds.builder();
-
+            builder.include(clusterItem.getPosition());
             for (Project project : projects) {
                 Marker nextMarker = mMap.addMarker(new MarkerOptions()
                         .position(project.getPosition())
@@ -110,7 +114,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
 
-        doNetworkSetup();
+        loadData();
     }
 
     @Override
@@ -128,44 +132,113 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void doNetworkSetup() {
+    private void loadData() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.base_url))
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-        mService = retrofit.create(MarkerService.class);
+        mService = retrofit.create(DataService.class);
 
-        loadVillageMarkers();
-    }
+        mDatabase = new DatabaseHelper(this).getWritableDatabase();
 
-    private void loadVillageMarkers() {
-        mService.getVillages()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(villages -> {
-                    mClusterManager.addItems(villages);
-
-                    LatLng malawi = new LatLng(-13.5, 34.5);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(malawi, 6.5f), 2000, null);
-
-                    loadProjects();
-                });
-    }
-
-    private void loadProjects() {
-        mService.getProjects()
-                .flatMap(projects -> Observable.fromIterable(projects))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(project -> {
-                    List<Project> projectList = mVillageProjectMapping.get(project.getVillageId());
-                    if (projectList == null) {
-                        projectList = new ArrayList<>();
-                        mVillageProjectMapping.put(project.getVillageId(), projectList);
+        Config dbConfig = getVersionsFromDatabase();
+        mService.getConfig()
+                .flatMap(config -> {
+                    mConfig = config;
+                    if (config.getVillagesVersion() > dbConfig.getVillagesVersion()) {
+                        return mService.getVillages();
+                    } else {
+                        return Observable.fromArray(getVillagesFromDatabase());
                     }
-                    projectList.add(project);
+                })
+                .flatMap(villages -> {
+                    if (mConfig.getVillagesVersion() > dbConfig.getVillagesVersion()) {
+                        saveVillagesToDatabase(villages);
+                        saveVersionsToDatabase(mConfig);
+                    }
+                    mClusterManager.addItems(villages);
+                    if (mConfig.getProjectsVersion() > dbConfig.getVillagesVersion()) {
+                        return mService.getProjects();
+                    } else {
+                        return Observable.fromArray(getProjectsFromDatabase());
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(projects -> {
+                    populateMarkers(projects);
+                    if (mConfig.getProjectsVersion() > dbConfig.getProjectsVersion()) {
+                        saveProjectsToDatabase(projects);
+                        if (mConfig.getVillagesVersion() == dbConfig.getVillagesVersion()) {
+                            saveVersionsToDatabase(mConfig);
+                        }
+                    }
+                }, error -> {
+                    if (dbConfig.getVillagesVersion() == 0) {
+
+                    }
+                    mClusterManager.addItems(getVillagesFromDatabase());
+                    populateMarkers(getProjectsFromDatabase());
                 });
+    }
+
+    private void populateMarkers(List<Project> projects){
+        LatLng malawi = new LatLng(-13.5, 34.5);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(malawi, 6.5f), 2000, null);
+
+        for (Project project : projects) {
+            List<Project> projectList = mVillageProjectMapping.get(project.getVillageId());
+            if (projectList == null) {
+                projectList = new ArrayList<>();
+                mVillageProjectMapping.put(project.getVillageId(), projectList);
+            }
+            projectList.add(project);
+        }
+    }
+
+    private void saveProjectsToDatabase(List<Project> projects) {
+        mDatabase.beginTransaction();
+        mDatabase.delete(DatabaseSchema.ProjectTable.NAME, null, null);
+        for (Project project : projects) {
+            mDatabase.insert(DatabaseSchema.ProjectTable.NAME, null, DatabaseSchema.createContentValues(project));
+        }
+        mDatabase.setTransactionSuccessful();
+        mDatabase.endTransaction();
+    }
+
+    private List<Project> getProjectsFromDatabase() {
+        Cursor cursor = mDatabase.query(DatabaseSchema.ProjectTable.NAME, null, null, null, null, null, null, null);
+        return new ProjectCursorWrapper(cursor).getProjects();
+    }
+
+    private void saveVillagesToDatabase(List<Village> villages) {
+        mDatabase.beginTransaction();
+        mDatabase.delete(DatabaseSchema.VillageTable.NAME, null, null);
+        for (Village village : villages) {
+            mDatabase.insert(DatabaseSchema.VillageTable.NAME, null, DatabaseSchema.createContentValues(village));
+        }
+        mDatabase.setTransactionSuccessful();
+        mDatabase.endTransaction();
+    }
+
+    private List<Village> getVillagesFromDatabase() {
+        Cursor cursor = mDatabase.query(DatabaseSchema.VillageTable.NAME, null, null, null, null, null, null, null);
+        return new VillageCursorWrapper(cursor).getVillages();
+    }
+
+    private Config getVersionsFromDatabase() {
+        Config dbConfig = new Config();
+        Cursor cursor = mDatabase.query(DatabaseSchema.VersionTable.NAME, null, null, null, null, null, null);
+        if (cursor.moveToNext()) {
+            dbConfig.setProjectsVersion(cursor.getInt(cursor.getColumnIndex(DatabaseSchema.VersionTable.Cols.PROJECTS)));
+            dbConfig.setVillagesVersion(cursor.getInt(cursor.getColumnIndex(DatabaseSchema.VersionTable.Cols.VILLAGES)));
+        }
+        return dbConfig;
+    }
+
+    private void saveVersionsToDatabase(Config config) {
+        mDatabase.update(DatabaseSchema.VersionTable.NAME, DatabaseSchema.createContentValues(config), null, null);
     }
 
     private class VillageRenderer extends DefaultClusterRenderer<Village> {

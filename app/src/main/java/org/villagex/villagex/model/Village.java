@@ -1,4 +1,4 @@
-package org.villagex.villagex.data;
+package org.villagex.villagex.model;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
@@ -22,16 +22,32 @@ public class Village implements ClusterItem {
         return mId;
     }
 
+    public void setId(int id) {
+        mId = id;
+    }
+
     public String getName() {
         return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
     }
 
     public float getLat() {
         return mLat;
     }
 
+    public void setLat(float lat) {
+        mLat = lat;
+    }
+
     public float getLng() {
         return mLng;
+    }
+
+    public void setLng(float lng) {
+        mLng = lng;
     }
 
     public String getTitle() {

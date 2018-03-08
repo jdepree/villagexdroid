@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Make a Donation for Mwanga"/>
+    <CheckBox android:id="@+id/payment_anonymous"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+                android:text="I'll keep it anonymous" />
+    <EditText android:id="@+id/payment_full_name"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="Full Name"
+              android:inputType="textCapWords"
+        />
+    <EditText android:id="@+id/payment_email"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="Email"
+              android:inputType="textEmailAddress"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <SeekBar android:id="@+id/payment_amount_slider"
+                 android:layout_width="0dp"
+                 android:layout_weight="1"
+                 android:layout_height="wrap_content"
+                 android:progress="4"
+            />
+        <TextView
+            android:id="@+id/payment_amount_text"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="$5"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp" >
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="Or any other amount: " />
+        <EditText android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:hint="$23.42" />
+    </LinearLayout>
+    <com.stripe.android.view.CardInputWidget
+        android:id="@+id/payment_card_input_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/submit_donation_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:text="Submit Donation" />
+</merge>

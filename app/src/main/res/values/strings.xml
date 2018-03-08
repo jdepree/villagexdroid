@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Village X</string>
     <string name="title_activity_main">Village X</string>
+    <string name="title_activity_payment">Make a Donation!</string>
     <string name="base_url">https://villagex.org</string>
     <string name="pictures_dir">/uploads/</string>
 </resources>

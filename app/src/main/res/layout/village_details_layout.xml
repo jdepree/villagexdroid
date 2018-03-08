@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/photo_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="Provide Clean Water to Mwanga" />
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="80"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal"
+        android:text="80% of $2000 funded by 22 donors." />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/timeline_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="Mwanga Village wants to drill a borehole to provide clean water to village residents. They are currently drinking from unclean water sources." />
+
+    <TextView
+        android:id="@+id/details_problem_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:text="+ Problem" />
+
+    <TextView android:id="@+id/details_problem_extended_text"
+              android:visibility="gone"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="14dp"
+              android:layout_marginLeft="15dp"
+              android:layout_marginRight="5dp"
+              android:layout_marginBottom="5dp"
+              android:text="There is no accessible clean water source for rural residents of Mwanga Village. This leads to illness and, in some cases, death, particularly among children under the age of 5. Residents currently fetch water for drinking and cooking from dirty wells or waterways like streams or rivers. Women, in particular, are vulnerable in the absence of clean, nearby water sources. In the rural sections of Mwanga, women often ask their husbands to fetch water using their bicycles, from a borehole located several kilometers away, in another village. The men usually resist. Some husbands abandon their wives over the perceived indignity. Under these conditions, wives are left with no choice but to fetch water from nearby, unsanitary sources." />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:text="+ Solution" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:text="+ Impact" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:text="+ Strategic Partners" />
+
+
+</merge>

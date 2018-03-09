@@ -9,7 +9,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 
-public interface DataService {
+public interface NetworkService {
     @GET("api/villages")
     Observable<List<Village>> getVillages();
 

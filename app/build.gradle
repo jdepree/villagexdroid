@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.9'
+    implementation 'io.reactivex:rxjava-joins:0.22.0'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'

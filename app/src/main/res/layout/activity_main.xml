@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         tools:context="org.villagex.activity.MainActivity" />
 
-    <android.support.v7.widget.RecyclerView
+    <org.villagex.view.ProjectRecyclerView
         android:id="@+id/project_recycler"
         android:layout_width="match_parent"
         android:layout_height="175dp"

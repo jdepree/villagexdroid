@@ -23,7 +23,7 @@ public class AppUtils {
         float initialTextSize = 32f;
         paint.setTextSize(initialTextSize);
         paint.getTextBounds(labelText, 0, labelText.length(), bounds);
-        paint.setTextSize(initialTextSize * Math.max(1, canvas.getWidth() / bounds.width()));
+        paint.setTextSize(initialTextSize * Math.min(1, canvas.getWidth() / bounds.width()));
 
         paint.setFakeBoldText(true);
         paint.setTextAlign(Paint.Align.CENTER);

@@ -26,13 +26,15 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImageView;
         private ProgressBar mProgressBar;
-        private TextView mTextView;
+        private TextView mProgressTextView;
+        private TextView mProjectNameTextView;
         public ViewHolder(LinearLayout layout) {
             super(layout);
 
             mImageView = layout.findViewById(R.id.project_card_image);
             mProgressBar = layout.findViewById(R.id.project_card_progress);
-            mTextView = layout.findViewById(R.id.project_card_text);
+            mProgressTextView = layout.findViewById(R.id.project_card_progress_text);
+            mProjectNameTextView = layout.findViewById(R.id.project_card_text);
         }
     }
 
@@ -59,9 +61,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
                 .transform(new RoundedCornersTransformation(15, 1, RoundedCornersTransformation.CornerType.TOP))
                 .centerCrop()
                 .into(holder.mImageView);
-        holder.mProgressBar.setProgress(Math.round(100 * project.getFunded() / project.getBudget()));
-        holder.mTextView.setText(project.getName());
-
+        int progress = Math.round(100 * project.getFunded() / project.getBudget());
+        holder.mProgressBar.setProgress(progress);
+        holder.mProjectNameTextView.setText(project.getVillage().getName() + "\n" + project.getName());
+        holder.mProgressTextView.setText(progress == 100 ? "Fully Funded!" : progress + "% of $" + project.getBudget());
         holder.itemView.setOnClickListener(v -> mListener.itemClicked(project));
     }
 

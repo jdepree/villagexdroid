@@ -15,7 +15,6 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.villagex.R;
-import org.villagex.activity.MainActivity;
 import org.villagex.model.Project;
 import org.villagex.model.Village;
 import org.villagex.util.AppUtils;
@@ -82,6 +81,9 @@ public class MapController implements ProjectAdapter.ItemClickListener {
     }
 
     public boolean zoomToLast() {
+        if (mCurrentVillageMarkers != null) {
+            clearVillageMarkers();
+        }
         if (!mLevelBounds.isEmpty()) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mLevelBounds.pop(), 0));
             return true;
@@ -127,7 +129,6 @@ public class MapController implements ProjectAdapter.ItemClickListener {
         } else {
             mLevelBounds.push(mMap.getProjection().getVisibleRegion().latLngBounds);
         }
-        mClusterManager.removeItem(village);
         mCurrentVillageMarkers = new ArrayList<>();
         mSelectedVillage = village;
 
@@ -156,8 +157,6 @@ public class MapController implements ProjectAdapter.ItemClickListener {
 
         @Override
         protected void onBeforeClusterItemRendered(Village village, MarkerOptions markerOptions) {
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_village));
-
             BitmapDescriptor descriptor = AppUtils.buildLabeledIcon(mContext, R.drawable.icon_village, village.getName());
             markerOptions.icon(descriptor);
         }

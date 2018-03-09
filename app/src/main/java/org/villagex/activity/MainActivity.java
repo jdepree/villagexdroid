@@ -1,32 +1,18 @@
 package org.villagex.activity;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.ClusterItem;
-import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.villagex.R;
@@ -34,20 +20,11 @@ import org.villagex.model.Config;
 import org.villagex.model.Project;
 import org.villagex.model.Village;
 import org.villagex.model.database.DataLayer;
-import org.villagex.model.database.DatabaseHelper;
-import org.villagex.model.database.DatabaseSchema;
-import org.villagex.model.database.ProjectCursorWrapper;
-import org.villagex.model.database.VillageCursorWrapper;
 import org.villagex.network.NetworkService;
-import org.villagex.util.AppUtils;
 import org.villagex.view.MapController;
-import org.villagex.view.ProjectAdapter;
 import org.villagex.view.ProjectRecyclerView;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Stack;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -149,7 +126,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }, error -> {
                     Log.e("Exception loading", error.getMessage());
                     if (dbConfig.getVillagesVersion() == 0) {
-                        // TODO Error message.
+                        if (!isDestroyed()) {
+                            new AlertDialog.Builder(this).setMessage(R.string.network_error_message)
+                                    .setOnDismissListener(dialog -> finish()).create().show();
+                        }
+                        return;
                     }
                     mMapController.addVillages(mDataLayer.getVillages());
 

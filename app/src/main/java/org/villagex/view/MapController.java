@@ -1,6 +1,7 @@
 package org.villagex.view;
 
 import android.content.Context;
+import android.support.design.widget.BottomSheetBehavior;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,13 +37,16 @@ public class MapController implements ProjectAdapter.ItemClickListener {
     private ClusterItem mSelectedVillage = null;
     private List<Marker> mCurrentVillageMarkers = null;
 
-    public MapController(Context context, GoogleMap map) {
+    private ProjectSelectedListener mProjectSelectedListener;
+
+    public MapController(Context context, GoogleMap map, GoogleMap.OnMapClickListener mapClickListener, ProjectSelectedListener projectSelectedListener) {
         mContext = context;
         mMap = map;
-        init();
+        mProjectSelectedListener = projectSelectedListener;
+        init(mapClickListener);
     }
 
-    private void init() {
+    private void init(GoogleMap.OnMapClickListener mapClickListener) {
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -71,12 +75,22 @@ public class MapController implements ProjectAdapter.ItemClickListener {
         });
 
         mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnMarkerClickListener(marker -> {
+            Project project = (Project)marker.getTag();
+            if (project != null) {
+                mProjectSelectedListener.onProjectSelected(project);
+            } else {
+                mClusterManager.onMarkerClick(marker);
+            }
+            return true;
+        });
 
+        mMap.setOnMapClickListener(mapClickListener);
     }
 
     @Override
     public void itemClicked(Project project) {
+        mProjectSelectedListener.onProjectSelected(project);
         zoomToVillage(project.getVillage());
     }
 
@@ -141,11 +155,16 @@ public class MapController implements ProjectAdapter.ItemClickListener {
                             "type_" + project.getType(), "drawable", mContext.getPackageName()))
                     )
             );
+            nextMarker.setTag(project);
             builder.include(nextMarker.getPosition());
             mCurrentVillageMarkers.add(nextMarker);
         }
         final LatLngBounds bounds = builder.build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS));
+    }
+
+    public interface ProjectSelectedListener {
+        void onProjectSelected(Project project);
     }
 
     private class VillageRenderer extends DefaultClusterRenderer<Village> {

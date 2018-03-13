@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Project {
     @SerializedName("project_id")
     private int mId;
@@ -32,6 +34,30 @@ public class Project {
 
     @SerializedName("picture_filename")
     private String mPicture;
+
+    @SerializedName("project_summary")
+    private String mSummary;
+
+    @SerializedName("project_community_problem")
+    private String mCommunityProblem;
+
+    @SerializedName("project_community_solution")
+    private String mCommunitySolution;
+
+    @SerializedName("project_impact")
+    private String mProjectImpact;
+
+    @SerializedName("project_community_partners")
+    private String mCommunityPartners;
+
+    @SerializedName("dates")
+    private String mDates;
+
+    @SerializedName("event_labels")
+    private String mEventLabels;
+
+    @SerializedName("donor_count")
+    private int mDonorCount;
 
     private Village mVillage;
 
@@ -113,6 +139,48 @@ public class Project {
 
     public void setPicture(String picture) {
         mPicture = picture;
+    }
+
+    public String getSummary() {
+        return mSummary;
+    }
+
+    public String getCommunityProblem() {
+        return mCommunityProblem;
+    }
+
+    public String getCommunitySolution() {
+        return mCommunitySolution;
+    }
+
+    public String getProjectImpact() {
+        return mProjectImpact;
+    }
+
+    public String getCommunityPartners() {
+        return mCommunityPartners;
+    }
+
+    public String[] getDates() {
+        if (mDates == null) {
+            return null;
+        }
+        return mDates.split(",");
+    }
+
+    public String[] getEventLabels() {
+        if (mEventLabels == null) {
+            return null;
+        }
+        return mDates.split(",");
+    }
+
+    public UpdatePhoto[] getPhotos() {
+        return new UpdatePhoto[] {};
+    }
+
+    public int getDonorCount() {
+        return mDonorCount;
     }
 
     public String getTitle() {

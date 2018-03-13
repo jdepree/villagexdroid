@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" >
-            <org.villagex.view.VillageDetailsView
+            <org.villagex.view.ProjectDetailsView
                 android:id="@+id/project_details_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

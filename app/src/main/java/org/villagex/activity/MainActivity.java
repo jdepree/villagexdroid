@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.Display;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.villagex.R;
@@ -22,6 +24,7 @@ import org.villagex.model.Village;
 import org.villagex.model.database.DataLayer;
 import org.villagex.network.NetworkService;
 import org.villagex.view.MapController;
+import org.villagex.view.ProjectDetailsView;
 import org.villagex.view.ProjectRecyclerView;
 
 import java.util.List;
@@ -32,14 +35,14 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, MapController.ProjectSelectedListener {
 
     private MapController mMapController;
     private DataLayer mDataLayer;
     private NetworkService mService;
 
     private LinearLayout mVillageDetailsContainer;
-    private NestedScrollView mVillageDetailsScrollView;
+    private ProjectDetailsView mDetailsView;
     private BottomSheetBehavior<LinearLayout> mBottomSheetBehavior;
     private ProjectRecyclerView mRecyclerView;
 
@@ -58,7 +61,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void prepareBottomSheet() {
         mVillageDetailsContainer = findViewById(R.id.details_container);
-        mVillageDetailsScrollView = findViewById(R.id.details_scroll_view);
+        mDetailsView = findViewById(R.id.project_details_view);
 
         mBottomSheetBehavior = BottomSheetBehavior.from(mVillageDetailsContainer);
         mBottomSheetBehavior.setPeekHeight(0);
@@ -72,16 +75,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMapController = new MapController(this, googleMap);
+        mMapController = new MapController(this, googleMap, latLng -> {
+            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        }, this);
 
         loadData();
     }
 
     @Override
     public void onBackPressed() {
-        if (!mMapController.zoomToLast()) {
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else if (!mMapController.zoomToLast()) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onProjectSelected(Project project) {
+        mDetailsView.bindData(project);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     private void loadData() {
@@ -127,7 +142,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("Exception loading", error.getMessage());
                     if (dbConfig.getVillagesVersion() == 0) {
                         if (!isDestroyed()) {
-                            new AlertDialog.Builder(this).setMessage(R.string.network_error_message)
+                            new AlertDialog.Builder(MainActivity.this).setMessage(R.string.network_error_message)
                                     .setOnDismissListener(dialog -> finish()).create().show();
                         }
                         return;

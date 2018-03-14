@@ -10,4 +10,6 @@
     <string name="project_details_subheading_impact">%1$s Impact</string>
     <string name="project_details_subheading_partners">%1$s Strategic Partners</string>
     <string name="project_details_funding_text">%1$d\%% of $%2$d funded by %3$d donors.</string>
+    <string name="donate_now">Donate Now!</string>
+    <string name="fully_funded">Fully Funded!</string>
 </resources>

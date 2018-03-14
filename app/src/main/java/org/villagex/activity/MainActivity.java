@@ -8,8 +8,11 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,6 +27,7 @@ import org.villagex.model.Village;
 import org.villagex.model.database.DataLayer;
 import org.villagex.network.NetworkService;
 import org.villagex.view.MapController;
+import org.villagex.view.PaymentView;
 import org.villagex.view.ProjectDetailsView;
 import org.villagex.view.ProjectRecyclerView;
 
@@ -45,6 +49,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private ProjectDetailsView mDetailsView;
     private BottomSheetBehavior<LinearLayout> mBottomSheetBehavior;
     private ProjectRecyclerView mRecyclerView;
+    private Button mSubmitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mBottomSheetBehavior = BottomSheetBehavior.from(mVillageDetailsContainer);
         mBottomSheetBehavior.setPeekHeight(0);
+
+        mSubmitButton = findViewById(R.id.submit_button);
+        mSubmitButton.setOnClickListener(v -> {
+            new MaterialDialog.Builder(MainActivity.this)
+                    .customView(new PaymentView(MainActivity.this), false)
+                    .canceledOnTouchOutside(false)
+                    .show();
+        });
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -96,6 +109,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onProjectSelected(Project project) {
         mDetailsView.bindData(project);
+        mSubmitButton.setText(getResources().getString(project.getFunded() < project.getBudget() ? R.string.donate_now : R.string.fully_funded));
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 

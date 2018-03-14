@@ -2,14 +2,12 @@ package org.villagex.model;
 
 public class UpdatePhoto {
     private String mTitle;
-    private String mThumbUrl;
-    private String mLargeUrl;
+    private String mImageUrl;
     private String mDate;
 
-    public UpdatePhoto(String title, String thumbUrl, String largeUrl, String date) {
+    public UpdatePhoto(String title, String imageUrl, String date) {
         mTitle = title;
-        mThumbUrl = thumbUrl;
-        mLargeUrl = largeUrl;
+        mImageUrl = imageUrl;
         mDate = date;
     }
 
@@ -17,12 +15,8 @@ public class UpdatePhoto {
         return mTitle;
     }
 
-    public String getThumbUrl() {
-        return mThumbUrl;
-    }
-
-    public String getLargeUrl() {
-        return mLargeUrl;
+    public String getImageUrl() {
+        return mImageUrl;
     }
 
     public String getDate() {

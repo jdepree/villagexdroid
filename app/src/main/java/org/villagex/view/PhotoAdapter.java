@@ -1,6 +1,8 @@
 package org.villagex.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +57,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> implemen
     public void onClick(View view) {
         UpdatePhoto photo = mPhotoMap.get(view);
         Context context = view.getContext();
-        new MaterialDialog.Builder(context)
-                .customView(new UpdatePhotoView(context, photo), false)
-                .backgroundColorRes(android.R.color.transparent)
-                .show();
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .customView(new UpdatePhotoView(context, photo), false).build();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setDimAmount(0);
+        dialog.show();
     }
 }
 

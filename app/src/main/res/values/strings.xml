@@ -12,4 +12,5 @@
     <string name="project_details_funding_text">%1$d\%% of $%2$d funded by %3$d donors.</string>
     <string name="donate_now">Donate Now!</string>
     <string name="fully_funded">Fully Funded!</string>
+    <string name="payment_title">Make a Donation for %1$s</string>
 </resources>

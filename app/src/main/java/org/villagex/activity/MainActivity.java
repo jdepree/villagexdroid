@@ -1,6 +1,8 @@
 package org.villagex.activity;
 
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -50,6 +52,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private BottomSheetBehavior<LinearLayout> mBottomSheetBehavior;
     private ProjectRecyclerView mRecyclerView;
     private Button mSubmitButton;
+    private Project mSelectedProject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +76,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSubmitButton = findViewById(R.id.submit_button);
         mSubmitButton.setOnClickListener(v -> {
-            new MaterialDialog.Builder(MainActivity.this)
-                    .customView(new PaymentView(MainActivity.this), false)
-                    .canceledOnTouchOutside(false)
-                    .show();
+            if (mSelectedProject.getFunded() < mSelectedProject.getBudget()) {
+                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .customView(new PaymentView(MainActivity.this, mSelectedProject), false)
+                        .canceledOnTouchOutside(false)
+                        .build();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setDimAmount(0);
+                dialog.show();
+            }
         });
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -108,6 +116,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onProjectSelected(Project project) {
+        mSelectedProject = project;
         mDetailsView.bindData(project);
         mSubmitButton.setText(getResources().getString(project.getFunded() < project.getBudget() ? R.string.donate_now : R.string.fully_funded));
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

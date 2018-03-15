@@ -19,9 +19,9 @@ import java.util.List;
 
 public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
     private Context mContext;
-    private List<TimeLineModel> mData;
+    private TimeLineModel[] mData;
 
-    public TimeLineAdapter(List<TimeLineModel> data) {
+    public TimeLineAdapter(TimeLineModel[] data) {
         mData = data;
     }
 
@@ -40,7 +40,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
 
     @Override
     public void onBindViewHolder(TimeLineViewHolder holder, int position) {
-        TimeLineModel timeLineModel = mData.get(position);
+        TimeLineModel timeLineModel = mData[position];
 
 
         if(timeLineModel.getStatus() == TimeLineModel.TimeLineStatus.UNSTARTED) {
@@ -51,9 +51,9 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
             holder.mTimelineView.setMarker(ContextCompat.getDrawable(mContext, R.drawable.timeline_marker), ContextCompat.getColor(mContext, R.color.colorPrimary));
         }
 
-        if(!timeLineModel.getDate().isEmpty()) {
+        if(timeLineModel.getDate() != null) {
             holder.mDateView.setVisibility(View.VISIBLE);
-            holder.mDateView.setText(DateTimeUtils.parseDateTime(timeLineModel.getDate()));
+            holder.mDateView.setText(timeLineModel.getDate());
         } else {
             holder.mDateView.setVisibility(View.GONE);
         }
@@ -63,7 +63,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return mData.length;
     }
 }
 
@@ -74,9 +74,9 @@ class TimeLineViewHolder extends RecyclerView.ViewHolder {
 
     public TimeLineViewHolder(View itemView, int viewType) {
         super(itemView);
-        mTimelineView = (TimelineView) itemView.findViewById(R.id.time_marker);
-        mDateView = (TextView) itemView.findViewById(R.id.text_timeline_date);
-        mMessageView = (TextView) itemView.findViewById(R.id.text_timeline_title);
+        mTimelineView = itemView.findViewById(R.id.time_marker);
+        mDateView = itemView.findViewById(R.id.text_timeline_date);
+        mMessageView = itemView.findViewById(R.id.text_timeline_title);
         mTimelineView.initLine(viewType);
     }
 

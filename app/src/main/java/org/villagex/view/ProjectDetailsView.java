@@ -23,7 +23,6 @@ public class ProjectDetailsView extends LinearLayout {
 
     private RecyclerView mTimeLineRecycler;
     private TimeLineAdapter mTimeLineAdapter;
-    private List<TimeLineModel> mTimeLineEvents;
 
     private ProgressBar mFundingBar;
     private TextView mFundingText;
@@ -126,12 +125,16 @@ public class ProjectDetailsView extends LinearLayout {
         mFundingBar.setProgress(fundingPercent);
         mFundingText.setText(getResources().getString(R.string.project_details_funding_text,
                 fundingPercent, project.getBudget(), project.getDonorCount()));
-        setPhotos(project.getPhotos());
-        mPhotoAdapter = new PhotoAdapter(mPhotoList);
-        mPhotoRecycler.setAdapter(mPhotoAdapter);
+        UpdatePhoto[] photos = project.getPhotos();
+        if (photos == null) {
+            mPhotoRecycler.setVisibility(View.GONE);
+        } else {
+            mPhotoRecycler.setVisibility(View.VISIBLE);
+            mPhotoAdapter = new PhotoAdapter(photos);
+            mPhotoRecycler.setAdapter(mPhotoAdapter);
+        }
 
-        setTimeLineItems(project.getEventLabels(), project.getDates());
-        mTimeLineAdapter = new TimeLineAdapter(mTimeLineEvents);
+        mTimeLineAdapter = new TimeLineAdapter(project.getEvents());
         mTimeLineRecycler.setAdapter(mTimeLineAdapter);
 
         TextView summary = findViewById(R.id.details_summary);
@@ -143,14 +146,4 @@ public class ProjectDetailsView extends LinearLayout {
         mSolutionExtended.setText(project.getCommunitySolution());
     }
 
-    private void setTimeLineItems(String[] timelineEvents, String[] timelineDates){
-        mTimeLineEvents = new ArrayList<>();
-        for (int i = 0; i < timelineEvents.length; i++) {
-            mTimeLineEvents.add(new TimeLineModel(timelineEvents[i], timelineDates[i], TimeLineModel.TimeLineStatus.COMPLETED));
-        }
-    }
-
-    private void setPhotos(UpdatePhoto[] photos) {
-        mPhotoList = Arrays.asList(photos);
-    }
 }

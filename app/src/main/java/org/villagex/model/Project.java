@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Project {
@@ -50,7 +51,7 @@ public class Project {
     @SerializedName("project_community_partners")
     private String mCommunityPartners;
 
-    @SerializedName("dates")
+    @SerializedName("event_dates")
     private String mDates;
 
     @SerializedName("event_labels")
@@ -59,7 +60,18 @@ public class Project {
     @SerializedName("donor_count")
     private int mDonorCount;
 
+    @SerializedName("update_pictures")
+    private String mUpdatePhotos;
+
+    @SerializedName("update_dates")
+    private String mUpdateDates;
+
+    @SerializedName("update_descriptions")
+    private String mUpdateDescriptions;
+
     private Village mVillage;
+    private TimeLineModel[] mEventArray;
+    private UpdatePhoto[] mPhotoArray;
 
     public int getId() {
         return mId;
@@ -161,22 +173,47 @@ public class Project {
         return mCommunityPartners;
     }
 
-    public String[] getDates() {
-        if (mDates == null) {
-            return null;
+    public TimeLineModel[] getEvents() {
+        if (mEventArray != null) {
+            return mEventArray;
         }
-        return mDates.split(",");
-    }
 
-    public String[] getEventLabels() {
-        if (mEventLabels == null) {
+        if (mDates == null || mEventLabels == null) {
             return null;
         }
-        return mDates.split(",");
+        String[] dates = mDates.split(",");
+        String[] eventLabels = mEventLabels.split(",");
+        List<TimeLineModel> result = new ArrayList<>();
+        boolean isFirst = true;
+        for (int i = 0; i < dates.length; i++) {
+            result.add(new TimeLineModel(eventLabels[i], dates[i],
+                    dates[i] == null
+                            ? (isFirst ? TimeLineModel.TimeLineStatus.IN_PROGRESS : TimeLineModel.TimeLineStatus.UNSTARTED)
+                            : TimeLineModel.TimeLineStatus.COMPLETED));
+            if (dates[i] == null) {
+                isFirst = false;
+            }
+        }
+
+        return mEventArray = result.toArray(new TimeLineModel[] {});
     }
 
     public UpdatePhoto[] getPhotos() {
-        return new UpdatePhoto[] {};
+        if (mPhotoArray != null) {
+            return mPhotoArray;
+        }
+
+        if (mUpdateDates == null || mUpdateDescriptions == null || mUpdatePhotos == null) {
+            return null;
+        }
+        String[] dates = mUpdateDates.split(",");
+        String[] descriptions = mUpdateDescriptions.split("~");
+        String[] photos = mUpdatePhotos.split(",");
+        List<UpdatePhoto> result = new ArrayList<>();
+        for (int i = 0; i < dates.length; i++) {
+            result.add(new UpdatePhoto(descriptions[i], photos[i], dates[i]));
+        }
+        return mPhotoArray = result.toArray(new UpdatePhoto[] {});
     }
 
     public int getDonorCount() {

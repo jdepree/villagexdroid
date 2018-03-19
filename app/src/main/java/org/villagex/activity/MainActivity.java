@@ -1,17 +1,15 @@
 package org.villagex.activity;
 
 import android.app.Dialog;
-import android.graphics.Color;
+import android.content.Intent;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -27,7 +25,6 @@ import org.villagex.model.Village;
 import org.villagex.model.database.DataLayer;
 import org.villagex.network.NetworkService;
 import org.villagex.view.MapController;
-import org.villagex.view.PaymentView;
 import org.villagex.view.ProjectDetailsView;
 import org.villagex.view.ProjectRecyclerView;
 
@@ -52,8 +49,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Button mSubmitButton;
     private Project mSelectedProject;
 
-    private Dialog mPaymentDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +72,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mSubmitButton = findViewById(R.id.submit_button);
         mSubmitButton.setOnClickListener(v -> {
             if (mSelectedProject.getFunded() < mSelectedProject.getBudget()) {
-                mPaymentDialog = new Dialog(this,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-                mPaymentDialog.setContentView(new PaymentView(mPaymentDialog, mSelectedProject));
-                mPaymentDialog.setCanceledOnTouchOutside(true);
-                mPaymentDialog.setOnDismissListener((dialogInterface) -> mPaymentDialog = null);
-                mPaymentDialog.show();
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+                viewIntent.setData(Uri.parse(getString(R.string.base_url) + "/one_time_payment_view.php?id=" + mSelectedProject.getId()));
+                startActivity(viewIntent);
             }
         });
 
@@ -105,9 +98,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (mPaymentDialog != null) {
-            mPaymentDialog.dismiss();
-        } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else if (!mMapController.zoomToLast()) {
             super.onBackPressed();

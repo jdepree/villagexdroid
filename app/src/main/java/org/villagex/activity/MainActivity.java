@@ -90,6 +90,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMapController = new MapController(this, googleMap, latLng -> {
             if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mMapController.restoreOriginalBounds();
             }
         }, this);
 
@@ -100,6 +101,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mMapController.restoreOriginalBounds();
         } else if (!mMapController.zoomToLast()) {
             super.onBackPressed();
         }

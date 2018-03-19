@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class MapController implements ProjectAdapter.ItemClickListener {
-    private static final int MAP_PADDING_PIXELS = 200;
+    private static final int MAP_PADDING_PIXELS = 300;
 
     private Context mContext;
     private GoogleMap mMap;
@@ -34,7 +34,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
 
     private Hashtable<Integer, Village> mVillageMapping = new Hashtable<>();
     private Stack<LatLngBounds> mLevelBounds = new Stack<>();
-    private ClusterItem mSelectedVillage = null;
+    private LatLngBounds mFullScreenBounds;
     private List<Marker> mCurrentVillageMarkers = null;
 
     private ProjectSelectedListener mProjectSelectedListener;
@@ -57,7 +57,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
         mClusterManager.setRenderer(new VillageRenderer(mMap, mClusterManager));
 
         mClusterManager.setOnClusterItemClickListener(clusterItem -> {
-            zoomToVillage((Village)clusterItem);
+            zoomToVillage((Village)clusterItem, null);
 
             return true;
         });
@@ -68,6 +68,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
             for (Object item : cluster.getItems()) {
                 builder.include(((ClusterItem)item).getPosition());
             }
+
             final LatLngBounds bounds = builder.build();
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS));
 
@@ -79,6 +80,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
             Project project = (Project)marker.getTag();
             if (project != null) {
                 mProjectSelectedListener.onProjectSelected(project);
+                adjustToVisibleWindow(project.getLat(), project.getLng());
             } else {
                 mClusterManager.onMarkerClick(marker);
             }
@@ -91,7 +93,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
     @Override
     public void itemClicked(Project project) {
         mProjectSelectedListener.onProjectSelected(project);
-        zoomToVillage(project.getVillage());
+        zoomToVillage(project.getVillage(), project);
     }
 
     public boolean zoomToLast() {
@@ -136,7 +138,7 @@ public class MapController implements ProjectAdapter.ItemClickListener {
         }
     }
 
-    public void zoomToVillage(Village village) {
+    public void zoomToVillage(Village village, Project focusedProject) {
         List<Project> projects = village.getProjects();
         if (mCurrentVillageMarkers != null) {
             clearVillageMarkers();
@@ -144,7 +146,6 @@ public class MapController implements ProjectAdapter.ItemClickListener {
             mLevelBounds.push(mMap.getProjection().getVisibleRegion().latLngBounds);
         }
         mCurrentVillageMarkers = new ArrayList<>();
-        mSelectedVillage = village;
 
         LatLngBounds.Builder builder = LatLngBounds.builder();
         builder.include(village.getPosition());
@@ -160,7 +161,31 @@ public class MapController implements ProjectAdapter.ItemClickListener {
             mCurrentVillageMarkers.add(nextMarker);
         }
         final LatLngBounds bounds = builder.build();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS), new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                if (focusedProject != null) {
+                    adjustToVisibleWindow(focusedProject.getLat(), focusedProject.getLng());
+                }
+            }
+            @Override
+            public void onCancel() {}
+        });
+    }
+
+    private void adjustToVisibleWindow(float lat, float lng) {
+        mFullScreenBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        double latDiff = mFullScreenBounds.southwest.latitude - mFullScreenBounds.northeast.latitude;
+        double latAbove = latDiff * .7 / 2;
+        double latCenter = lat + latAbove;
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(latCenter, lng)));
+    }
+
+    public void restoreOriginalBounds() {
+        if (mFullScreenBounds != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mFullScreenBounds, 0));
+            mFullScreenBounds = null;
+        }
     }
 
     public interface ProjectSelectedListener {

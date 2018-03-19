@@ -4,22 +4,29 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/photo_recycler"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="@dimen/project_banner_image_height" />
 
-    <TextView
+    <ImageView android:id="@+id/project_banner"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/project_banner_image_height" />
+
+    <TextView android:id="@+id/project_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="22dp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"
-        android:text="Provide Clean Water to Mwanga" />
+        android:textColor="@android:color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"/>
 
     <ProgressBar
         android:id="@+id/project_funding_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_height="20dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/progressbar"
         android:indeterminate="false"
         android:max="100"
         android:progress="80"
@@ -47,15 +54,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14dp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_margin="10dp" />
     <TextView
         android:id="@+id/details_problem_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <TextView android:id="@+id/details_problem_extended_text"
@@ -71,8 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <TextView android:id="@+id/details_solution_extended_text"
@@ -88,8 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <TextView android:id="@+id/details_impact_extended_text"
@@ -106,8 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <TextView android:id="@+id/details_partners_extended_text"

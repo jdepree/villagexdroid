@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="update_photo_recycler_image_width">100dp</dimen>
+    <dimen name="project_recycler_image_width">125dp</dimen>
+    <dimen name="project_banner_image_height">150dp</dimen>
 </resources>

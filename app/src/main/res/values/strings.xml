@@ -5,6 +5,7 @@
     <string name="base_url">https://villagex.org</string>
     <string name="pictures_dir">/uploads/</string>
     <string name="network_error_message">Unable to download projects, please check your connection and try again.</string>
+    <string name="project_details_title">%1$s to %2$s</string>
     <string name="project_details_subheading_problem">%1$s Problem</string>
     <string name="project_details_subheading_solution">%1$s Solution</string>
     <string name="project_details_subheading_impact">%1$s Impact</string>
@@ -12,5 +13,6 @@
     <string name="project_details_funding_text">%1$d\%% of $%2$d funded by %3$d donors.</string>
     <string name="donate_now">Donate Now!</string>
     <string name="fully_funded">Fully Funded!</string>
+    <string name="partially_funded">%1$d\%% of $%2$d</string>
     <string name="payment_title">Make a Donation for %1$s</string>
 </resources>

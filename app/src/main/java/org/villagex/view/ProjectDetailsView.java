@@ -1,34 +1,35 @@
 package org.villagex.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.villagex.R;
 import org.villagex.model.Project;
-import org.villagex.model.TimeLineModel;
 import org.villagex.model.UpdatePhoto;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ProjectDetailsView extends LinearLayout {
 
     private RecyclerView mTimeLineRecycler;
     private TimeLineAdapter mTimeLineAdapter;
 
+    private TextView mProjectTitle;
     private ProgressBar mFundingBar;
     private TextView mFundingText;
     private RecyclerView mPhotoRecycler;
+    private ImageView mBanner;
     private PhotoAdapter mPhotoAdapter;
-    private List<UpdatePhoto> mPhotoList;
     private TextView mProblemExtended;
     private TextView mSolutionExtended;
     private TextView mImpactExtended;
@@ -56,12 +57,15 @@ public class ProjectDetailsView extends LinearLayout {
 
         inflate(context, R.layout.village_details_layout, this);
 
+        mProjectTitle = findViewById(R.id.project_name);
+
         mFundingBar = findViewById(R.id.project_funding_bar);
         mFundingText = findViewById(R.id.project_funding_text);
 
         mPhotoRecycler = findViewById(R.id.photo_recycler);
         mPhotoRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         mPhotoRecycler.setHasFixedSize(true);
+        mBanner = findViewById(R.id.project_banner);
 
         mTimeLineRecycler = findViewById(R.id.timeline_recycler);
         mTimeLineRecycler.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
@@ -121,6 +125,8 @@ public class ProjectDetailsView extends LinearLayout {
     }
 
     public void bindData(Project project) {
+        mProjectTitle.setText(getResources().getString(R.string.project_details_title, project.getName(), project.getVillage().getName()));
+
         int fundingPercent = (int)Math.ceil(100 * project.getFunded() / project.getBudget());
         mFundingBar.setProgress(fundingPercent);
         mFundingText.setText(getResources().getString(R.string.project_details_funding_text,
@@ -128,8 +134,23 @@ public class ProjectDetailsView extends LinearLayout {
         UpdatePhoto[] photos = project.getPhotos();
         if (photos == null) {
             mPhotoRecycler.setVisibility(View.GONE);
+            mBanner.setVisibility(View.VISIBLE);
+
+            if (project.getBanner() != null) {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                ((Activity) getContext()).getWindowManager()
+                        .getDefaultDisplay()
+                        .getMetrics(displayMetrics);
+
+                Picasso.with(getContext())
+                        .load(getContext().getString(R.string.base_url) + getContext().getString(R.string.pictures_dir) + project.getBanner())
+                        .resize(displayMetrics.widthPixels, getResources().getDimensionPixelSize(R.dimen.project_banner_image_height))
+                        .centerCrop()
+                        .into(mBanner);
+            }
         } else {
             mPhotoRecycler.setVisibility(View.VISIBLE);
+            mBanner.setVisibility(View.GONE);
             mPhotoAdapter = new PhotoAdapter(photos);
             mPhotoRecycler.setAdapter(mPhotoAdapter);
         }

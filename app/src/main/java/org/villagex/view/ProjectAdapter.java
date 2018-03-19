@@ -56,14 +56,15 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         Project project = mProjects.get(position);
         Picasso.with(context)
                 .load(context.getString(R.string.base_url) + context.getString(R.string.pictures_dir) + project.getPicture())
-                .resize(150, 125)
-                .transform(new RoundedCornersTransformation(15, 1, RoundedCornersTransformation.CornerType.TOP))
+                .resizeDimen(R.dimen.project_recycler_image_width, R.dimen.project_recycler_image_width)
                 .centerCrop()
+                .transform(new RoundedCornersTransformation(15, 1, RoundedCornersTransformation.CornerType.TOP))
                 .into(holder.mImageView);
         int progress = Math.round(100 * project.getFunded() / project.getBudget());
         holder.mProgressBar.setProgress(progress);
         holder.mProjectNameTextView.setText(project.getVillage().getName() + "\n" + project.getName());
-        holder.mProgressTextView.setText(progress == 100 ? "Fully Funded!" : progress + "% of $" + project.getBudget());
+        holder.mProgressTextView.setText(progress == 100 ? context.getString(R.string.fully_funded)
+                : context.getString(R.string.partially_funded, progress, project.getBudget()));
         holder.itemView.setOnClickListener(v -> mListener.itemClicked(project));
     }
 

@@ -1,5 +1,6 @@
 package org.villagex.activity;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -14,12 +15,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.villagex.R;
@@ -54,6 +52,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Button mSubmitButton;
     private Project mSelectedProject;
 
+    private Dialog mPaymentDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,13 +77,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mSubmitButton = findViewById(R.id.submit_button);
         mSubmitButton.setOnClickListener(v -> {
             if (mSelectedProject.getFunded() < mSelectedProject.getBudget()) {
-                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-                        .customView(new PaymentView(MainActivity.this, mSelectedProject), false)
-                        .canceledOnTouchOutside(false)
-                        .build();
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.getWindow().setDimAmount(0);
-                dialog.show();
+                mPaymentDialog = new Dialog(this,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                mPaymentDialog.setContentView(new PaymentView(mPaymentDialog, mSelectedProject));
+                mPaymentDialog.setCanceledOnTouchOutside(true);
+                mPaymentDialog.setOnDismissListener((dialogInterface) -> mPaymentDialog = null);
+                mPaymentDialog.show();
             }
         });
 
@@ -107,7 +105,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        if (mPaymentDialog != null) {
+            mPaymentDialog.dismiss();
+        } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else if (!mMapController.zoomToLast()) {
             super.onBackPressed();

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="150dp"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_marginLeft="1dp"
     android:layout_marginRight="1dp"
     android:background="@drawable/rounded"
     android:elevation="4dp" >
     <ImageView android:id="@+id/project_card_image"
-        android:layout_width="match_parent"
-        android:layout_height="125dp" />
+        android:layout_width="@dimen/project_recycler_image_width"
+        android:layout_height="@dimen/project_recycler_image_width" />
     <FrameLayout android:layout_height="20dp"
         android:layout_width="match_parent">
         <ProgressBar android:id="@+id/project_card_progress"

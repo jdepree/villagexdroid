@@ -44,5 +44,4 @@ dependencies {
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    implementation 'com.stripe:stripe-android:6.1.1'
 }

@@ -36,6 +36,9 @@ public class Project {
     @SerializedName("picture_filename")
     private String mPicture;
 
+    @SerializedName("banner_filename")
+    private String mBanner;
+
     @SerializedName("project_summary")
     private String mSummary;
 
@@ -151,6 +154,14 @@ public class Project {
 
     public void setPicture(String picture) {
         mPicture = picture;
+    }
+
+    public String getBanner() {
+        return mBanner;
+    }
+
+    public void setBanner(String banner) {
+        mBanner = banner;
     }
 
     public String getSummary() {

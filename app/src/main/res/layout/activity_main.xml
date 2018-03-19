@@ -43,7 +43,7 @@
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:text="Donate Now!" />
+            android:text="@string/donate_now" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

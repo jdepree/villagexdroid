@@ -12,10 +12,7 @@ import com.github.vipulasri.timelineview.TimelineView;
 
 import org.villagex.R;
 import org.villagex.model.TimeLineModel;
-import org.villagex.util.DateTimeUtils;
 import org.villagex.util.VectorDrawableUtils;
-
-import java.util.List;
 
 public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineViewHolder> {
     private Context mContext;

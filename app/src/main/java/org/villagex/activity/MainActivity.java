@@ -1,20 +1,21 @@
 package org.villagex.activity;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import org.villagex.R;
@@ -45,6 +46,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private ProjectDetailsView mDetailsView;
     private BottomSheetBehavior<LinearLayout> mBottomSheetBehavior;
     private ProjectRecyclerView mRecyclerView;
+    private Button mSubmitButton;
+    private Project mSelectedProject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mBottomSheetBehavior = BottomSheetBehavior.from(mVillageDetailsContainer);
         mBottomSheetBehavior.setPeekHeight(0);
+
+        mSubmitButton = findViewById(R.id.submit_button);
+        mSubmitButton.setOnClickListener(v -> {
+            if (mSelectedProject.getFunded() < mSelectedProject.getBudget()) {
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+                viewIntent.setData(Uri.parse(getString(R.string.base_url) + "/one_time_payment_view.php?id=" + mSelectedProject.getId()));
+                startActivity(viewIntent);
+            }
+        });
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -95,7 +107,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onProjectSelected(Project project) {
+        mSelectedProject = project;
         mDetailsView.bindData(project);
+        mSubmitButton.setText(getResources().getString(project.getFunded() < project.getBudget() ? R.string.donate_now : R.string.fully_funded));
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/photo_recycler"
         android:layout_width="match_parent"
         android:layout_height="@dimen/project_banner_image_height" />
@@ -44,7 +44,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center_horizontal" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/timeline_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

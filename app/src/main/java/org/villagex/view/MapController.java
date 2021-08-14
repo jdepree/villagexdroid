@@ -1,7 +1,7 @@
 package org.villagex.view;
 
 import android.content.Context;
-import android.support.design.widget.BottomSheetBehavior;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -149,16 +149,18 @@ public class MapController implements ProjectAdapter.ItemClickListener {
 
         LatLngBounds.Builder builder = LatLngBounds.builder();
         builder.include(village.getPosition());
-        for (Project project : projects) {
-            Marker nextMarker = mMap.addMarker(new MarkerOptions()
-                    .position(project.getPosition())
-                    .icon(BitmapDescriptorFactory.fromResource(mContext.getResources().getIdentifier(
-                            "type_" + project.getType(), "drawable", mContext.getPackageName()))
-                    )
-            );
-            nextMarker.setTag(project);
-            builder.include(nextMarker.getPosition());
-            mCurrentVillageMarkers.add(nextMarker);
+        if (projects != null) {
+            for (Project project : projects) {
+                Marker nextMarker = mMap.addMarker(new MarkerOptions()
+                        .position(project.getPosition())
+                        .icon(BitmapDescriptorFactory.fromResource(mContext.getResources().getIdentifier(
+                                "type_" + project.getType(), "drawable", mContext.getPackageName()))
+                        )
+                );
+                nextMarker.setTag(project);
+                builder.include(nextMarker.getPosition());
+                mCurrentVillageMarkers.add(nextMarker);
+            }
         }
         final LatLngBounds bounds = builder.build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING_PIXELS), new GoogleMap.CancelableCallback() {

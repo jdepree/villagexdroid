@@ -2,9 +2,9 @@ package org.villagex.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -130,7 +130,7 @@ public class ProjectDetailsView extends LinearLayout {
         int fundingPercent = (int)Math.ceil(100 * project.getFunded() / project.getBudget());
         mFundingBar.setProgress(fundingPercent);
         mFundingText.setText(getResources().getString(R.string.project_details_funding_text,
-                fundingPercent, project.getBudget(), project.getDonorCount()));
+                fundingPercent, Math.round(project.getBudget()), project.getDonorCount()));
         UpdatePhoto[] photos = project.getPhotos();
         if (photos == null) {
             mPhotoRecycler.setVisibility(View.GONE);

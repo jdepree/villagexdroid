@@ -1,7 +1,7 @@
 package org.villagex.view;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -64,7 +64,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         holder.mProgressBar.setProgress(progress);
         holder.mProjectNameTextView.setText(project.getVillage().getName() + "\n" + project.getName());
         holder.mProgressTextView.setText(progress == 100 ? context.getString(R.string.fully_funded)
-                : context.getString(R.string.partially_funded, progress, project.getBudget()));
+                : context.getString(R.string.partially_funded, progress, Math.round(project.getBudget())));
         holder.itemView.setOnClickListener(v -> mListener.itemClicked(project));
     }
 

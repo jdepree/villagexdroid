@@ -28,10 +28,10 @@ public class Project {
     private String mType;
 
     @SerializedName("project_budget")
-    private int mBudget;
+    private float mBudget;
 
     @SerializedName("project_funded")
-    private int mFunded;
+    private float mFunded;
 
     @SerializedName("picture_filename")
     private String mPicture;
@@ -124,19 +124,19 @@ public class Project {
         mVillage = village;
     }
 
-    public int getBudget() {
+    public float getBudget() {
         return mBudget;
     }
 
-    public void setBudget(int budget) {
+    public void setBudget(float budget) {
         mBudget = budget;
     }
 
-    public int getFunded() {
+    public float getFunded() {
         return mFunded;
     }
 
-    public void setFunded(int funded) {
+    public void setFunded(float funded) {
         mFunded = funded;
     }
 

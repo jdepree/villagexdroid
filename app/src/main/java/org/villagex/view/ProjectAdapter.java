@@ -54,7 +54,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     public void onBindViewHolder(ProjectAdapter.ViewHolder holder, int position) {
         Context context = holder.mImageView.getContext();
         Project project = mProjects.get(position);
-        Picasso.with(context)
+        Picasso.get()
                 .load(context.getString(R.string.base_url) + context.getString(R.string.pictures_dir) + project.getPicture())
                 .resizeDimen(R.dimen.project_recycler_image_width, R.dimen.project_recycler_image_width)
                 .centerCrop()

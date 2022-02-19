@@ -142,7 +142,7 @@ public class ProjectDetailsView extends LinearLayout {
                         .getDefaultDisplay()
                         .getMetrics(displayMetrics);
 
-                Picasso.with(getContext())
+                Picasso.get()
                         .load(getContext().getString(R.string.base_url) + getContext().getString(R.string.pictures_dir) + project.getBanner())
                         .resize(displayMetrics.widthPixels, getResources().getDimensionPixelSize(R.dimen.project_banner_image_height))
                         .centerCrop()

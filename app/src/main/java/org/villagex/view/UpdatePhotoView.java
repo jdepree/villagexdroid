@@ -25,7 +25,7 @@ public class UpdatePhotoView extends LinearLayout {
         inflate(context, R.layout.update_photo_layout, this);
         ((TextView) findViewById(R.id.update_photo_caption_view)).setText(
                 ("0".equals(photo.getTitle()) ? "" : photo.getTitle() + "\n\n") + photo.getDate());
-        Picasso.with(context).load(getResources().getString(R.string.base_url)
+        Picasso.get().load(getResources().getString(R.string.base_url)
                 + getResources().getString(R.string.pictures_dir)
                 + photo.getImageUrl()).into((ImageView) findViewById(R.id.update_photo_image_view));
     }

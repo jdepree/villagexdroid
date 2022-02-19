@@ -42,7 +42,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> implemen
 
     @Override
     public void onBindViewHolder(PhotoViewHolder holder, int position) {
-        Picasso.with(mContext).load(holder.getView().getResources().getString(R.string.base_url)
+        Picasso.get().load(holder.getView().getResources().getString(R.string.base_url)
                         + holder.getView().getResources().getString(R.string.pictures_dir)
                 + mData[position].getImageUrl()).into(holder.getView());
         mPhotoMap.put(holder.getView(), mData[position]);

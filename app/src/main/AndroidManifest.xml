@@ -3,7 +3,7 @@
     package="org.villagex">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <application
+    <application android:name="org.villagex.VillageXApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,6 +22,7 @@
         <activity
             android:name="org.villagex.activity.SplashActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
